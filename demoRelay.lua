@@ -6,7 +6,7 @@ if ... then -- if called with arguments...
 else -- otherwise run the background program
   -- also protect against running multiple times.
   if _G._BGRUNNER and _G._BGRUNNER.RUNNING then
-    error("Already running!")
+    error("Already running, unless you meant to do " .. shell.getRunningProgram() .. " <message> ?")
   end
 
   _G._BGRUNNER = {}
