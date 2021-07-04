@@ -88,15 +88,15 @@ function module.PrintMessage(...)
   return linesPrinted
 end
 
-function module.Run(callback)
-  expect(1, callback, "function")
+function module.Run(runFunction)
+  expect(1, runFunction, "function")
 
   local ok, err = pcall(
     parallel.waitForAny,
     function()
       shell.run("shell")
     end,
-    callback
+    runFunction
   )
 
   if not ok then
