@@ -74,6 +74,8 @@ function module.PrintMessage(...)
 
   -- print the data
   w.setCursorPos(1, oy)
+  w.clearLine()
+  w.setCursorPos(1, oy)
   local linesPrinted = printToWindow(...)
 
   -- rewrite what was originally there.
