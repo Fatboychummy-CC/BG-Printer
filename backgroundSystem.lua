@@ -67,6 +67,7 @@ function module.PrintMessage(...)
   -- get window information
   local ox, oy = w.getCursorPos()
   local mx, my = w.getSize()
+  local oldBlink = w.getCursorBlink()
 
   -- get the current line.
   local lineText, lineFG, lineBG = w.getLine(oy)
@@ -78,6 +79,8 @@ function module.PrintMessage(...)
   -- rewrite what was originally there.
   w.setCursorPos(1, (oy + linesPrinted >= my and my or oy + linesPrinted))
   w.blit(lineText, lineFG, lineBG)
+  w.setCursorBlink(oldBlink)
+  w.setCursorPos(ox, (oy + linesPrinted >= my and my or oy + linesPrinted))
 
   -- just like print, lets return the amount of lines we printed.
   return linesPrinted
