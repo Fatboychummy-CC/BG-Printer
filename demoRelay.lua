@@ -81,4 +81,5 @@ else -- otherwise run the background program
   BG.Setup()
   pcall(BG.Run, chatterino)
   _G._BGRUNNER.RUNNING = false
+  BG.Clean()
 end
