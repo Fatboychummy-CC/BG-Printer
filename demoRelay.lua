@@ -1,4 +1,4 @@
-local BG = require "backgroundSystem"
+local BG = require "BGPrint"
 
 if ... then -- if called with arguments...
   local args = table.pack(...)
