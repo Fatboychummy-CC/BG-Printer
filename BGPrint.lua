@@ -88,9 +88,8 @@ function module.PrintMessage(...)
   return linesPrinted
 end
 
-function module.Run(callback, dontError)
+function module.Run(callback)
   expect(1, callback, "function")
-  expect(2, dontError, "boolean", "nil")
 
   local ok, err = pcall(
     parallel.waitForAny,
