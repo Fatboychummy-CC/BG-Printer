@@ -75,10 +75,6 @@ function module.PrintMessage(...)
   w.setCursorPos(1, oy)
   local linesPrinted = printToWindow(...)
 
-  if oy + linesPrinted >= my then
-    w.scroll(1)
-  end
-
   -- rewrite what was originally there.
   w.setCursorPos(1, (oy + linesPrinted >= my and my or oy + linesPrinted))
   w.blit(lineText, lineFG, lineBG)
