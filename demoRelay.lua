@@ -1,17 +1,12 @@
 local BG = require "BGPrint"
 
 if ... then -- if called with arguments...
-  local args = table.pack(...)
-  os.queueEvent("CHATTER_MESSAGE", string.format("> %s: %s", "You", table.concat(args, ' ')))
+  local args = table.pack(...) -- the user wants to send a message
+  os.queueEvent("CHATTER_MESSAGE", string.format("> %s: %s", "You", table.concat(args, ' '))) -- so send it.
 else -- otherwise run the background program
-  -- also protect against running multiple times.
-  if _G._BGRUNNER and _G._BGRUNNER.RUNNING then
+  if _G._BGRUNNER and _G._BGRUNNER.RUNNING then -- also protect against running multiple times.
     error("Already running, unless you meant to do " .. shell.getRunningProgram() .. " <message> ?")
   end
-
-  _G._BGRUNNER = {}
-  _G._BGRUNNER.RUNNING = true
-
 
   local chats = { -- chats with "%" in them require the user to say something before it will continue.
     "Hello!",
@@ -36,15 +31,16 @@ else -- otherwise run the background program
   local charsReadPerSecond = 5
 
   local function chatterino()
+    -- print fake join message
     BG.PrintMessage("> You joined the chat.")
     BG.PrintMessage("> There are currently 2 users online:")
     BG.PrintMessage(">   - Johnny")
     BG.PrintMessage(">   - Billy")
-    os.sleep(3)
+    os.sleep(3) -- artificial wait to similate people realizing "oh a person joined!"
 
     local i = 0
     parallel.waitForAny(
-      function()
+      function() -- main function - run the logic of the """AI"""
         while true do
           i = i + 1
           local chat = chats[i]
@@ -56,10 +52,16 @@ else -- otherwise run the background program
               -- wait for user to chat.
               os.pullEvent("CHATTER_MESSAGE")
             end
+
+            -- Wait for the amount of time it takes the AI to read the last message
             os.sleep(#(chats[i - 1] or "") / charsReadPerSecond)
+            -- Wait for the amount of time it takes the AI to write the next message.
             os.sleep(#chat / charsWritePerSecond)
+            -- show the next message
             BG.PrintMessage(string.format("> %s: %s", names[i % 2 + 1], chat))
           else
+
+            -- Once we've gone through all the messages, everyone leaves.
             os.sleep(0.5)
             BG.PrintMessage("> Johnny left the chat.")
             os.sleep(0.5)
@@ -68,7 +70,7 @@ else -- otherwise run the background program
           end
         end
       end,
-      function()
+      function() -- secondary function to print messages from the user.
         while true do
           local _, message = os.pullEvent("CHATTER_MESSAGE")
           BG.PrintMessage(message)
@@ -78,8 +80,18 @@ else -- otherwise run the background program
   end
 
 
+  -- Setup the workspace
+  _G._BGRUNNER = {}
+  _G._BGRUNNER.RUNNING = true
   BG.Setup()
-  pcall(BG.Run, chatterino)
+
+  -- Run the program
+  local ok, err = pcall(BG.Run, chatterino)
+  if not ok then
+    printError(err)
+  end
+
+  -- clean up the workspace.
   _G._BGRUNNER.RUNNING = false
   BG.Clean()
 end
